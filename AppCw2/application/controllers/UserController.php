@@ -21,4 +21,24 @@ class UserController extends CI_Controller {
         // Load view
         $this->load->view('search_results_view', $data);
     }
+    public function home(){
+		$this->chklog();
+		$this->load->model('user_model');
+		$user_data = $this->user_model->user_data($this->user_id);
+		$this->session->set_userdata('fullname', ucwords($user_data[0]->fname." ".$user_data[0]->lname));
+		$top_answers = $this->user_model->get_user_top_ans($this->user_id);
+		$this->load->view('users/home', compact('top_answers'));
+	}
+
+	public function logout(){
+		$this->session->unset_userdata('user_id');
+		$this->session->unset_userdata('fullname');
+        return redirect('users/index');
+	}
+
+	public function chklog(){
+		if(!$this->user_id){
+			return redirect('users/index');
+		}
+	}
 }

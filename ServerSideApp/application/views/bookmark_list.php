@@ -4,45 +4,141 @@
     <title>Bookmarks</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
             padding: 20px;
+            color: #333;
         }
         h2 {
-            color: #333;
+            color: #2c3e50;
+            font-weight: 300;
         }
         form {
             margin-bottom: 20px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        form input, form button {
+            font-size: 16px;
+            padding: 10px;
+            margin-right: 10px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+        }
+        form input:focus {
+            border-color: #3498db;
+        }
+        form button {
+            background-color: #3498db;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+        form button:hover {
+            background-color: #2980b9;
         }
         #bookmarks {
             margin-top: 20px;
         }
         .bookmark {
-            border: 1px solid #ccc;
-            padding: 10px;
-            margin-bottom: 10px;
-            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 20px;
+            margin-bottom: 20px;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
         .bookmark h3 {
             margin-top: 0;
-            margin-bottom: 5px;
+            color: #3498db;
+        }
+        .bookmark a {
+            color: #2980b9;
+            text-decoration: none;
+            word-wrap: break-word;
+        }
+        .bookmark a:hover {
+            text-decoration: underline;
         }
         .bookmark p {
-            margin-top: 5px;
-            margin-bottom: 5px;
             color: #666;
         }
         .bookmark button {
-            margin-right: 5px;
+            background-color: #e74c3c;
+            color: #fff;
+            border: none;
+            padding: 10px;
+            margin-right: 10px;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        .bookmark button.edit {
+            background-color: #f39c12;
+        }
+        .bookmark button:hover {
+            opacity: 0.8;
+        }
+        .logout {
+            display: inline-block;
+            margin-bottom: 20px;
+            padding: 10px 20px;
+            background-color: #e74c3c;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        .logout:hover {
+            opacity: 0.8;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+            padding-top: 60px;
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 500px;
+            border-radius: 5px;
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
         }
     </style>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.9.1/underscore-min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.4.0/backbone-min.js"></script>
 </head>
 <body>
     <h2>Bookmarks</h2>
     <a href="<?php echo site_url('user/logout'); ?>">Logout</a>
-    <form id="addBookmarkForm">
+
+    <form id="searchBookmarkForm" action="<?php echo site_url('bookmark/search'); ?>" method="POST">
+        <input type="text" id="tag" name="tag" placeholder="Search by tag" required>
+        <button type="submit">Search</button>
+    </form>
+
+    <form id="addBookmarkForm" action="<?php echo site_url('bookmark/create'); ?>" method="POST">
         <input type="text" id="title" name="title" placeholder="Title" required>
         <input type="url" id="url" name="url" placeholder="URL" required>
         <input type="text" id="tags" name="tags" placeholder="Tags (comma-separated)">
@@ -50,135 +146,118 @@
     </form>
     <div id="bookmarks">
         <?php foreach ($bookmarks as $bookmark): ?>
-            <div class="bookmark" data-id="<?= $bookmark['id'] ?>">
-                <h3><?= $bookmark['title'] ?></h3>
-                <a href="<?= $bookmark['url'] ?>"><?= $bookmark['url'] ?></a>
-                <p>Tags: <?= implode(', ', explode(',', $bookmark['tags'])) ?></p>
-                <button class="delete">Delete</button>
-                <button class="edit">Edit</button>
+            <div class="bookmark" data-id="<?php echo $bookmark['id']; ?>">
+                <h3><?php echo $bookmark['title']; ?></h3>
+                <a href="<?php echo $bookmark['url']; ?>"><?php echo $bookmark['url']; ?></a>
+                <p>Tags: <?php echo $bookmark['tags']; ?></p>
+                <button class="delete" data-id="<?php echo $bookmark['id']; ?>">Delete</button>
+                <button class="edit" data-id="<?php echo $bookmark['id']; ?>">Edit</button>
             </div>
         <?php endforeach; ?>
     </div>
-
-    <script type="text/template" id="bookmarkTemplate">
-        <div class="bookmark" data-id="<%= id %>">
-            <h3><%= title %></h3>
-            <a href="<%= url %>"><%= url %></a>
-            <p>Tags: <%= tags %></p>
-            <button class="delete">Delete</button>
-            <button class="edit">Edit</button>
+  
+    </div>
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div id="modal-body"></div>
         </div>
-    </script>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.css" />
 
     <script>
-$(document).ready(function() {
-    // Define the Bookmark model
-    var Bookmark = Backbone.Model.extend({
-        urlRoot: '/ServerSideYR/ServerSideApp/index.php/bookmark',
-        defaults: {
-            title: '',
-            url: '',
-            tags: ''
-        }
-    });
-
-    // Define the Bookmarks collection
-    var Bookmarks = Backbone.Collection.extend({
-        model: Bookmark,
-        url: '/ServerSideYR/ServerSideApp/index.php/bookmark'
-    });
-
-    // Define the Bookmark view
-    var BookmarkView = Backbone.View.extend({
-        tagName: 'div',
-        className: 'bookmark',
-        template: _.template($('#bookmarkTemplate').html()),
-
-        events: {
-            'click .delete': 'deleteBookmark',
-            'click .edit': 'editBookmark'
-        },
-
-        deleteBookmark: function() {
-            this.model.destroy();
-            this.remove();
-        },
-
-        editBookmark: function() {
-            // Implementation for editing the bookmark
-            var newTitle = prompt("Enter new title:", this.model.get('title'));
-            var newUrl = prompt("Enter new URL:", this.model.get('url'));
-            var newTags = prompt("Enter new tags (comma-separated):", this.model.get('tags'));
-            if (newTitle && newUrl && newTags) {
-                this.model.save({
-                    title: newTitle,
-                    url: newUrl,
-                    tags: newTags
-                }, {
-                    success: function(model, response) {
-                        // Optionally update view or handle success
+        $(document).ready(function() {
+            $('.delete').on('click', function() {
+                var id = $(this).data('id');
+                $.ajax({
+                    url: '/ServerSideYR/ServerSideApp/index.php/bookmark/delete/' + id,
+                    type: 'DELETE',
+                    success: function(result) {
+                        alert('Bookmark deleted successfully');
+                        location.reload();
                     },
-                    error: function(model, xhr, options) {
-                        var responseText = JSON.parse(xhr.responseText);
-                        alert("Failed to update bookmark: " + responseText.error);
+                    error: function(xhr, status, error) {
+                        alert('Failed to delete bookmark');
                     }
                 });
-            }
-        },
+            });
 
-        render: function() {
-            this.$el.html(this.template(this.model.toJSON()));
-            return this;
-        }
-    });
+            $('.edit').on('click', function() {
+                var id = $(this).data('id');
+                $.get('/ServerSideYR/ServerSideApp/index.php/bookmark/edit/' + id, function(data) {
+                    $('#modal-body').html(data);
+                    $('#editModal').show();
 
-    // Define the Bookmarks view
-    var BookmarksView = Backbone.View.extend({
-        el: '#bookmarks',
+                    $('#editBookmarkForm').on('submit', function(e) {
+                        e.preventDefault();
+                        var formData = $(this).serialize();
+                        $.ajax({
+                            url: '/ServerSideYR/ServerSideApp/index.php/bookmark/update/' + id,
+                            type: 'POST',
+                            data: formData,
+                            success: function(result) {
+                            // Directly use 'result', assuming it's already an object
+                             if (result.success) {
+                                alert('Bookmark updated successfully');
+                                location.reload();
+                          } else {
+                            alert('Failed to update bookmark');
+                            }
+                        },
+                    error: function(xhr, status, error) {
+                        alert('Failed to update bookmark');
+                                }
+                        });
+                    });
+                });
+            });
 
-        initialize: function() {
-            this.collection = new Bookmarks(<?php echo json_encode($bookmarks); ?>); // Initialize with PHP data
-            this.listenTo(this.collection, 'sync', this.render);
-            this.render();
-        },
+            $('#addBookmarkForm').on('submit', function(e) {
+                e.preventDefault();
+                var formData = $(this).serialize();
+                $.ajax({
+                    url: $(this).attr('action'),
+                    type: 'POST',
+                    data: formData,
+                    success: function(result) {
+                        location.reload();
+                    },
+                    error: function(xhr, status, error) {
+                        alert('Failed to add bookmark');
+                    }
+                });
+            });
 
-        render: function() {
-            this.$el.empty();
-            this.collection.each(this.addBookmark, this);
-            return this;
-        },
+            $('#searchBookmarkForm').on('submit', function(e) {
+                e.preventDefault();
+                var formData = $(this).serialize();
+                $.ajax({
+                    url: $(this).attr('action'),
+                    type: 'POST',
+                    data: formData,
+                    success: function(result) {
+                        $('#bookmarks').html(result);
+                    },
+                    error: function(xhr, status, error) {
+                        alert('Failed to search bookmarks');
+                    }
+                });
+            });
 
-        addBookmark: function(bookmark) {
-            var view = new BookmarkView({ model: bookmark });
-            this.$el.append(view.render().el);
-        }
-    });
+            // Close the modal when the user clicks on <span> (x)
+            $(document).on('click', '.close', function() {
+                $('#editModal').hide();
+            });
 
-    // Initialize the App view
-    var appView = new BookmarksView();
-
-    // Submit form handling
-    $('#addBookmarkForm').submit(function(e) {
-        e.preventDefault();
-        var title = $('#title').val();
-        var url = $('#url').val();
-        var tags = $('#tags').val();
-        var bookmark = new Bookmark({ title: title, url: url, tags: tags });
-        bookmark.save(null, {
-            success: function(model, response) {
-                appView.collection.add(model);
-                $('#title').val('');
-                $('#url').val('');
-                $('#tags').val('');
-            },
-            error: function(model, xhr, options) {
-                var responseText = JSON.parse(xhr.responseText);
-                alert("Failed to add bookmark: " + responseText.error);
-            }
+            // Close the modal when the user clicks anywhere outside of the modal
+            $(window).on('click', function(event) {
+                if ($(event.target).is('#editModal')) {
+                    $('#editModal').hide();
+                }
+            });
         });
-    });
-});
-
     </script>
 </body>
 </html>

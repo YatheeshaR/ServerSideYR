@@ -6,7 +6,7 @@
 <body>
     <h2>Edit Bookmark</h2>
     <?php echo validation_errors(); ?>
-    <?php echo form_open('bookmark/update/'.$bookmark['id']); ?>
+    <?php echo form_open('', array('id' => 'editBookmarkForm')); ?>
         <label for="title">Title</label>
         <input type="text" name="title" value="<?php echo $bookmark['title']; ?>" required><br>
 

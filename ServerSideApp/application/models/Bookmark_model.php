@@ -3,12 +3,16 @@ class Bookmark_model extends CI_Model {
     public function __construct() {
         $this->load->database();
     }
-
+    
     public function get_bookmarks($id, $user_id) {
-        $this->db->where('id', $id);
-        $this->db->where('user_id', $user_id);
-        $query = $this->db->get('bookmarks');
-        return $query->row_array();
+        if ($id === null) {
+            $this->db->where('user_id', $user_id);
+            return $this->db->get('bookmarks')->result_array();
+        } else {
+            $this->db->where('id', $id);
+            $this->db->where('user_id', $user_id);
+            return $this->db->query('SELECT * FROM bookmarks WHERE id = ? AND user_id = ?', array($id, $user_id))->row_array();
+        }
     }
 
     public function get_bookmark_count($user_id) {
@@ -38,5 +42,19 @@ class Bookmark_model extends CI_Model {
         $query = $this->db->get('bookmarks');
         return $query->result_array();
     }
+
+
+    public function get_bookmarks_paged($user_id, $limit, $start) {
+        $this->db->where('user_id', $user_id);
+        $this->db->limit($limit, $start);
+        $query = $this->db->get('bookmarks');
+    
+        if ($query->num_rows() > 0) {
+            return $query->result_array();
+        } else {
+            return array();
+        }
+    }
+    
 }
 ?>

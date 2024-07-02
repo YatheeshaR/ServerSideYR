@@ -58,4 +58,5 @@ $route['bookmark/create'] = 'bookmark/create';
 $route['bookmark/(:num)'] = 'bookmark/view/$1';
 $route['bookmark/update/(:num)'] = 'bookmark/update/$1';
 $route['bookmark/delete/(:num)'] = 'bookmark/delete/$1';
+$route['bookmark/edit/(:num)'] = 'bookmark/edit/$1';
 

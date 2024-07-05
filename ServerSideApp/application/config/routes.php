@@ -49,14 +49,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | Examples:	my-controller/index	-> my_controller/index
 |		my-controller/my-method	-> my_controller/my_method
 */
-$route['default_controller'] = 'user/login';
+$route['default_controller'] = 'api/user/login_post';
 $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;
 
-$route['bookmark'] = 'bookmark/index';
-$route['bookmark/create'] = 'bookmark/create';
-$route['bookmark/(:num)'] = 'bookmark/view/$1';
-$route['bookmark/update/(:num)'] = 'bookmark/update/$1';
-$route['bookmark/delete/(:num)'] = 'bookmark/delete/$1';
-$route['bookmark/edit/(:num)'] = 'bookmark/edit/$1';
-
+$route['api/bookmarks']['get'] = 'api/bookmark/index_get';
+$route['api/bookmarks']['post'] = 'api/bookmark/index_post';
+$route['api/bookmarks/(:num)']['put'] = 'api/bookmark/index_put/$1';
+$route['api/bookmarks/(:num)']['delete'] = 'api/bookmark/index_delete/$1';
+$route['api/bookmarks/search']['post'] = 'api/bookmark/search_post';
+$route['api/bookmarks/view/(:num)']['get'] = 'api/bookmark/view_get/$1';

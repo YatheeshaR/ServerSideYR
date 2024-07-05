@@ -10,10 +10,12 @@
             padding: 20px;
             color: #333;
         }
+
         h2 {
             color: #2c3e50;
             font-weight: 300;
         }
+
         form {
             margin-bottom: 20px;
             padding: 20px;
@@ -21,28 +23,35 @@
             border-radius: 5px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
-        form input, form button {
+
+        form input,
+        form button {
             font-size: 16px;
             padding: 10px;
             margin-right: 10px;
             border: 1px solid #ddd;
             border-radius: 3px;
         }
+
         form input:focus {
             border-color: #3498db;
         }
+
         form button {
             background-color: #3498db;
             color: #fff;
             border: none;
             cursor: pointer;
         }
+
         form button:hover {
             background-color: #2980b9;
         }
+
         #bookmarks {
             margin-top: 20px;
         }
+
         .bookmark {
             border: 1px solid #ddd;
             border-radius: 5px;
@@ -51,21 +60,26 @@
             background-color: #fff;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
+
         .bookmark h3 {
             margin-top: 0;
             color: #3498db;
         }
+
         .bookmark a {
             color: #2980b9;
             text-decoration: none;
             word-wrap: break-word;
         }
+
         .bookmark a:hover {
             text-decoration: underline;
         }
+
         .bookmark p {
             color: #666;
         }
+
         .bookmark button {
             background-color: #e74c3c;
             color: #fff;
@@ -75,12 +89,15 @@
             border-radius: 3px;
             cursor: pointer;
         }
+
         .bookmark button.edit {
             background-color: #f39c12;
         }
+
         .bookmark button:hover {
             opacity: 0.8;
         }
+
         .logout {
             display: inline-block;
             margin-bottom: 20px;
@@ -91,9 +108,11 @@
             border-radius: 3px;
             cursor: pointer;
         }
+
         .logout:hover {
             opacity: 0.8;
         }
+
         .modal {
             display: none;
             position: fixed;
@@ -106,6 +125,7 @@
             background-color: rgba(0, 0, 0, 0.4);
             padding-top: 60px;
         }
+
         .modal-content {
             background-color: #fefefe;
             margin: 5% auto;
@@ -115,149 +135,100 @@
             max-width: 500px;
             border-radius: 5px;
         }
+
         .close {
             color: #aaa;
             float: right;
             font-size: 28px;
             font-weight: bold;
         }
+
         .close:hover,
         .close:focus {
             color: black;
             text-decoration: none;
             cursor: pointer;
-        }
+        }    
     </style>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.9.1/underscore-min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.4.0/backbone-min.js"></script>
+    <!-- Load your Backbone app scripts -->
+    <script src="../assests/js/models/bookmark_model.js"type="text/javascript"></script>>
+    <script src="../assests/js/collections/bookmark_collection.js" type="text/javascript"></script>
+    <script src="../assests/js/views/bookmark_view.js" type="text/javascript"></script>>
+    <script src="../assests/js/views/edit_model_view.js" type="text/javascript"></script>>
+    <script src="../assests/js/views/search_view.js" type="text/javascript"></script>>
+    <script src="../assests/js/app.js" type="text/javascript" ></script>
+    <script src="../assests/js/views/bookmark_list_view.js" type="text/javascript"></script>
+</head>
 </head>
 <body>
     <h2>Bookmarks</h2>
     <a href="<?php echo site_url('user/logout'); ?>">Logout</a>
 
-    <form id="searchBookmarkForm" action="<?php echo site_url('bookmark/search'); ?>" method="POST">
-        <input type="text" id="tag" name="tag" placeholder="Search by tag" required>
-        <button type="submit">Search</button>
-    </form>
+ <!-- bookmark_list.php -->
+<div id="app"></div>
 
-    <form id="addBookmarkForm" action="<?php echo site_url('bookmark/create'); ?>" method="POST">
-        <input type="text" id="title" name="title" placeholder="Title" required>
-        <input type="url" id="url" name="url" placeholder="URL" required>
-        <input type="text" id="tags" name="tags" placeholder="Tags (comma-separated)">
-        <button type="submit">Add Bookmark</button>
-    </form>
-    <div id="bookmarks">
-        <?php foreach ($bookmarks as $bookmark): ?>
-            <div class="bookmark" data-id="<?php echo $bookmark['id']; ?>">
-                <h3><?php echo $bookmark['title']; ?></h3>
-                <a href="<?php echo $bookmark['url']; ?>"><?php echo $bookmark['url']; ?></a>
-                <p>Tags: <?php echo $bookmark['tags']; ?></p>
-                <button class="delete" data-id="<?php echo $bookmark['id']; ?>">Delete</button>
-                <button class="edit" data-id="<?php echo $bookmark['id']; ?>">Edit</button>
-            </div>
-        <?php endforeach; ?>
-    </div>
-  
-    </div>
-    <div id="editModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <div id="modal-body"></div>
-        </div>
-    </div>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.css" />
+<!-- search form -->
+<form id="searchBookmarkForm">
+  <input type="text" id="tag" name="tag" placeholder="Search by tag" required>
+  <button type="submit">Search</button>
+</form>
 
-    <script>
-        $(document).ready(function() {
-            $('.delete').on('click', function() {
-                var id = $(this).data('id');
-                $.ajax({
-                    url: '/ServerSideYR/ServerSideApp/index.php/bookmark/delete/' + id,
-                    type: 'DELETE',
-                    success: function(result) {
-                        alert('Bookmark deleted successfully');
-                        location.reload();
-                    },
-                    error: function(xhr, status, error) {
-                        alert('Failed to delete bookmark');
-                    }
-                });
-            });
+<!-- add bookmark form -->
+<form id="addBookmarkForm">
+  <input type="text" id="title" name="title" placeholder="Title" required>
+  <input type="url" id="url" name="url" placeholder="URL" required>
+  <input type="text" id="tags" name="tags" placeholder="Tags (comma-separated)">
+  <button type="submit">Add Bookmark</button>
+</form>
 
-            $('.edit').on('click', function() {
-                var id = $(this).data('id');
-                $.get('/ServerSideYR/ServerSideApp/index.php/bookmark/edit/' + id, function(data) {
-                    $('#modal-body').html(data);
-                    $('#editModal').show();
+<!-- edit modal -->
+<div id="editModal" class="modal" style="display: none;">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <div id="modal-body"></div>
+  </div>
+</div>
 
-                    $('#editBookmarkForm').on('submit', function(e) {
-                        e.preventDefault();
-                        var formData = $(this).serialize();
-                        $.ajax({
-                            url: '/ServerSideYR/ServerSideApp/index.php/bookmark/update/' + id,
-                            type: 'POST',
-                            data: formData,
-                            success: function(result) {
-                            // Directly use 'result', assuming it's already an object
-                             if (result.success) {
-                                alert('Bookmark updated successfully');
-                                location.reload();
-                          } else {
-                            alert('Failed to update bookmark');
-                            }
-                        },
-                    error: function(xhr, status, error) {
-                        alert('Failed to update bookmark');
-                                }
-                        });
-                    });
-                });
-            });
+<!-- templates -->
+<script type="text/template" id="bookmark-template">
+  <div class="bookmark" data-id="<%= id %>">
+    <h3><%= title %></h3>
+    <a href="<%= url %>"><%= url %></a>
+    <p>Tags: <%= tags %></p>
+    <button class="delete" data-id="<%= id %>">Delete</button>
+    <button class="edit" data-id="<%= id %>">Edit</button>
+  </div>
+</script>
 
-            $('#addBookmarkForm').on('submit', function(e) {
-                e.preventDefault();
-                var formData = $(this).serialize();
-                $.ajax({
-                    url: $(this).attr('action'),
-                    type: 'POST',
-                    data: formData,
-                    success: function(result) {
-                        location.reload();
-                    },
-                    error: function(xhr, status, error) {
-                        alert('Failed to add bookmark');
-                    }
-                });
-            });
+<script type="text/template" id="edit-template">
+  <h2>Edit Bookmark</h2>
+  <form id="editBookmarkForm">
+    <label for="title">Title</label>
+    <input type="text" name="title" value="<%= title %>" required><br>
 
-            $('#searchBookmarkForm').on('submit', function(e) {
-                e.preventDefault();
-                var formData = $(this).serialize();
-                $.ajax({
-                    url: $(this).attr('action'),
-                    type: 'POST',
-                    data: formData,
-                    success: function(result) {
-                        $('#bookmarks').html(result);
-                    },
-                    error: function(xhr, status, error) {
-                        alert('Failed to search bookmarks');
-                    }
-                });
-            });
+    <label for="url">URL</label>
+    <input type="url" name="url" value="<%= url %>" required><br>
 
-            // Close the modal when the user clicks on <span> (x)
-            $(document).on('click', '.close', function() {
-                $('#editModal').hide();
-            });
+    <label for="tags">Tags</label>
+    <input type="text" name="tags" value="<%= tags %>"><br>
 
-            // Close the modal when the user clicks anywhere outside of the modal
-            $(window).on('click', function(event) {
-                if ($(event.target).is('#editModal')) {
-                    $('#editModal').hide();
-                }
-            });
-        });
-    </script>
+    <input type="submit" value="Update">
+  </form>
+</script>
+
+<!-- scripts -->
+<script src="https://code.jquery.com/jquery-3.3.1.min.js" type="text/javascript"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.13.4/underscore-min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.4.1/backbone-min.js"></script>
+<!-- <script src="../assests/js/models/bookmark_model.js"type="text/javascript"></script>>
+<script src="../assests/js/collections/bookmark_collection.js" type="text/javascript"></script>
+<script src="../assests/js/views/bookmark_view.js" type="text/javascript"></script>>
+<script src="../assests/js/views/edit_model_view.js" type="text/javascript"></script>>
+<script src="../assests/js/views/search_view.js" type="text/javascript"></script>>
+<script src="../assests/js/app.js" type="text/javascript" ></script>
+<script src="../assests/js/views/bookmark_list_view.js" type="text/javascript"></script>> -->
 </body>
 </html>

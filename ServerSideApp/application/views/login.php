@@ -69,32 +69,12 @@
             background-color: #0056b3;
         }
     </style>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-        $(document).ready(function() {
-            $('#loginForm').submit(function(event) {
-                event.preventDefault();
-                $.ajax({
-                    type: 'POST',
-                    url: '/api/login',
-                    data: $(this).serialize(),
-                    success: function(response) {
-                        alert(response.message);
-                    },
-                    error: function(response) {
-                        alert(response.responseJSON.message);
-                    }
-                });
-            });
-        });
-    </script>
 </head>
-
 <body>
     <div class="login-container">
         <h2>Login</h2>
         <?php echo $this->session->flashdata('error'); ?>
-        <?php echo form_open('user/authenticate'); ?>
+        <?php echo form_open('/user/authenticate'); ?>
             <div class="form-group">
                 <label for="username">Username</label>
                 <input type="text" name="username" required>

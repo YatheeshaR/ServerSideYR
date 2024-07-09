@@ -1,18 +1,11 @@
-var app = app || {};
-
-app.SearchView = Backbone.View.extend({
-    el: '#search-bookmark',
-
+var SearchView = Backbone.View.extend({
+    el: '#searchBookmarkForm',
     events: {
-        'submit form': 'search'
+        'submit': 'searchBookmarks'
     },
-
-    search: function(e) {
-        e.preventDefault();
-        var tag = this.$('input[name=tag]').val();
-        var filtered = this.collection.filter(function(bookmark) {
-            return bookmark.get('tags').indexOf(tag) !== -1;
-        });
-        app.bookmarksView.render(filtered);
+    searchBookmarks: function(event) {
+        event.preventDefault();
+        var tag = $(event.currentTarget).find('input[name="tag"]').val();
+        this.collection.search(tag);
     }
 });

@@ -1,7 +1,8 @@
 // bookmark_collection.js
-var app = app || {};
-
-app.collections.Bookmarks = Backbone.Collection.extend({
-    model: app.models.Bookmark,
-    url: '/ServerSideYR/ServerSideApp/index.php/api/bookmark' // Adjust the URL to match your API endpoint
+var BookmarkCollection = Backbone.Collection.extend({
+	model: BookmarkModel,
+	url: "/api/bookmarks",
+	parse: function (data) {
+		return data.bookmarks;
+	},
 });

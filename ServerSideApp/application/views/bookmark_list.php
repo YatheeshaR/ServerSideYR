@@ -136,6 +136,13 @@
             border-radius: 5px;
         }
 
+				.modal-content .header {
+						display: flex;
+flex-direction: row;
+align-items: center;
+justify-content: space-between;
+				}
+
         .close {
             color: #aaa;
             float: right;
@@ -150,25 +157,12 @@
             cursor: pointer;
         }    
     </style>
-    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.9.1/underscore-min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.4.0/backbone-min.js"></script>
-    <!-- Load your Backbone app scripts -->
-    <script src="../assests/js/models/bookmark_model.js"type="text/javascript"></script>>
-    <script src="../assests/js/collections/bookmark_collection.js" type="text/javascript"></script>
-    <script src="../assests/js/views/bookmark_view.js" type="text/javascript"></script>>
-    <script src="../assests/js/views/edit_model_view.js" type="text/javascript"></script>>
-    <script src="../assests/js/views/search_view.js" type="text/javascript"></script>>
-    <script src="../assests/js/app.js" type="text/javascript" ></script>
-    <script src="../assests/js/views/bookmark_list_view.js" type="text/javascript"></script>
-</head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.13.4/underscore-min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.4.1/backbone-min.js"></script>
 </head>
 <body>
     <h2>Bookmarks</h2>
     <a href="<?php echo site_url('user/logout'); ?>">Logout</a>
-
- <!-- bookmark_list.php -->
-<div id="app"></div>
 
 <!-- search form -->
 <form id="searchBookmarkForm">
@@ -184,12 +178,16 @@
   <button type="submit">Add Bookmark</button>
 </form>
 
+ <!-- bookmark_list.php -->
+<div id="bookmarks">
+</div>
+
+<div id="pagination">
+</div>
+
+
 <!-- edit modal -->
-<div id="editModal" class="modal" style="display: none;">
-  <div class="modal-content">
-    <span class="close">&times;</span>
-    <div id="modal-body"></div>
-  </div>
+<div id="editModal" class="modal">
 </div>
 
 <!-- templates -->
@@ -204,31 +202,33 @@
 </script>
 
 <script type="text/template" id="edit-template">
-  <h2>Edit Bookmark</h2>
-  <form id="editBookmarkForm">
-    <label for="title">Title</label>
-    <input type="text" name="title" value="<%= title %>" required><br>
+  <div class="modal-content">
+		<div class="header">
+			<h2>Edit Bookmark</h2>
+			<span class="close">&times;</span>
+		</div>
+		<form id="editBookmarkForm">
+			<label for="title">Title</label>
+			<input type="text" name="title" value="<%= title %>" required><br>
 
-    <label for="url">URL</label>
-    <input type="url" name="url" value="<%= url %>" required><br>
+			<label for="url">URL</label>
+			<input type="url" name="url" value="<%= url %>" required><br>
 
-    <label for="tags">Tags</label>
-    <input type="text" name="tags" value="<%= tags %>"><br>
+			<label for="tags">Tags</label>
+			<input type="text" name="tags" value="<%= tags %>"><br>
 
-    <input type="submit" value="Update">
-  </form>
+			<input type="submit" value="Update">
+		</form>
+
+    <div id="modal-body"></div>
+  </div>
 </script>
 
 <!-- scripts -->
 <script src="https://code.jquery.com/jquery-3.3.1.min.js" type="text/javascript"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.13.4/underscore-min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.4.1/backbone-min.js"></script>
-<!-- <script src="../assests/js/models/bookmark_model.js"type="text/javascript"></script>>
-<script src="../assests/js/collections/bookmark_collection.js" type="text/javascript"></script>
-<script src="../assests/js/views/bookmark_view.js" type="text/javascript"></script>>
-<script src="../assests/js/views/edit_model_view.js" type="text/javascript"></script>>
-<script src="../assests/js/views/search_view.js" type="text/javascript"></script>>
-<script src="../assests/js/app.js" type="text/javascript" ></script>
-<script src="../assests/js/views/bookmark_list_view.js" type="text/javascript"></script>> -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.6.0/backbone-min.js"></script>
+
+<script src="/assests/js/app.js" type="text/javascript" ></script>
 </body>
 </html>

@@ -4,28 +4,23 @@ class Bookmark_model extends CI_Model {
         $this->load->database();
     }
     
-    public function get_bookmarks($user_id, $id = null) {
-        $this->db->where('user_id', $user_id);
-        if ($id === null) {
-            return $this->db->get('bookmarks')->result_array();
-        } else {
-            $this->db->where('id', $id);
-            return $this->db->get('bookmarks')->row_array();
-        }
+    public function get_bookmark($id, $user_id) {
+			$this->db->where('id', $id);
+			$this->db->where('user_id', $user_id);
+			return $this->db->query('SELECT * FROM bookmarks WHERE id = ? AND user_id = ?', array($id, $user_id))->row_array();
     }
 
-    public function get_all_bookmarks() {
-        $query = $this->db->get('bookmarks');
-        return $query->result_array();
-    }
-    
     public function get_bookmark_count($user_id) {
         $this->db->where('user_id', $user_id);
         return $this->db->count_all_results('bookmarks');
     }
 
-    public function add_bookmark($data) {
-        return $this->db->insert('bookmarks', $data);
+    public function add_bookmark($data, $user_id) {
+				$data->user_id = $user_id;
+        $this->db->insert('bookmarks', $data);
+
+				$id = $this->db->insert_id();
+				return $this->get_bookmark($id, $user_id);
     }
 
     public function delete_bookmark($id, $user_id) {
@@ -40,15 +35,23 @@ class Bookmark_model extends CI_Model {
         return $this->db->update('bookmarks', $data);
     }
 
-    public function search_bookmarks($user_id, $tag) {
-        $this->db->where('user_id', $user_id);
+    public function search($tag) {  
+        $this->db->where('user_id', $this->session->userdata('user_id'));
         $this->db->like('tags', $tag);
         $query = $this->db->get('bookmarks');
-        return $query->result_array();
+        $bookmarks = $query->result_array();
+    
+        // Clear existing bookmarks and add searched bookmarks
+        this.collection.reset();
+        this.collection.add(bookmarks);
     }
 
-    public function get_bookmarks_paged($user_id, $limit, $start) {
+
+    public function get_bookmarks($user_id, $limit, $start, $tag) {
         $this->db->where('user_id', $user_id);
+				if ($tag != null) {
+					$this->db->like('tags', $tag);
+				}
         $this->db->limit($limit, $start);
         $query = $this->db->get('bookmarks');
     
@@ -58,5 +61,6 @@ class Bookmark_model extends CI_Model {
             return array();
         }
     }
+    
 }
 ?>

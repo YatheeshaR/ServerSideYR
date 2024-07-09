@@ -532,10 +532,11 @@ if ( ! function_exists('redirect'))
 	 */
 	function redirect($uri = '', $method = 'auto', $code = NULL)
 	{
-		if ( ! preg_match('#^(\w+:)?//#i', $uri))
-		{
-			$uri = site_url($uri);
-		}
+		// DONT DO THIS WRONG
+		/*if ( ! preg_match('#^(\w+:)?//#i', $uri))*/
+		/*{*/
+		/*	$uri = site_url($uri);*/
+		/*}*/
 
 		// IIS environment likely? Use 'refresh' for better compatibility
 		if ($method === 'auto' && isset($_SERVER['SERVER_SOFTWARE']) && strpos($_SERVER['SERVER_SOFTWARE'], 'Microsoft-IIS') !== FALSE)

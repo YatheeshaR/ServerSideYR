@@ -60,7 +60,7 @@
     <div class="container">
         <h2>Register</h2>
         <?php echo validation_errors('<p class="error">', '</p>'); ?>
-        <?php echo form_open('user/create_account'); ?>
+        <?php echo form_open('/user/create_account'); ?>
             <label for="username">Username</label>
             <input type="text" name="username" required><br>
 

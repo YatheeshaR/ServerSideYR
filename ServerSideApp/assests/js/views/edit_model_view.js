@@ -1,16 +1,19 @@
-var app = app || {};
-
-app.EditBookmarkView = Backbone.View.extend({
-    el: '#edit-bookmark',
-
+// edit_modal_view.js
+var EditModalView = Backbone.View.extend({
+    el: '#editModal',
+    template: _.template($('#edit-template').html()),
     events: {
-        'submit form': 'submit'
+        'submit #editBookmarkForm': 'updateBookmark'
     },
-
-    submit: function(e) {
-        e.preventDefault();
-        var newTitle = this.$('input[name=title]').val();
-        var newUrl = this.$('input[name=url]').val();
-        this.model.save({ title: newTitle, url: newUrl });
+    render: function() {
+        this.$el.html(this.template(this.model.toJSON()));
+        return this;
+    },
+    updateBookmark: function(event) {
+        event.preventDefault();
+        var formData = $(event.currentTarget).serializeObject();
+        this.model.save(formData);
+        // Close edit modal
+        this.$el.hide();
     }
 });

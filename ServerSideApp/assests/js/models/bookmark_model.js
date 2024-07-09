@@ -1,8 +1,7 @@
 // bookmark_model.js
-var app = app || {};
-app.models.BookmarkModel = Backbone.Model.extend({
+var BookmarkModel = Backbone.Model.extend({
     url: function() {
-        return '/ServerSideYR/ServerSideApp/index.php/api/bookmark/' + this.id;
+        return 'api/bookmarks/' + this.id;
     },
     defaults: {
         title: '',

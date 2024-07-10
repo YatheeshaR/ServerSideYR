@@ -75,6 +75,8 @@
 
             <input type="submit" value="Register">
         <?php echo form_close(); ?>
+
+				<a style="margin-top:10px" href="/user/login">Have an account? Login</a>
     </div>
 </body>
 </html>

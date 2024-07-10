@@ -120,15 +120,42 @@ const SearchView = Backbone.View.extend({
 	},
 });
 
+let page = 1;
 const PaginationView = Backbone.View.extend({
 	el: "#pagination",
+	events: {
+		"click .prev": "previous",
+		"click .next": "next",
+	},
 	initialize: function () {
 		this.listenTo(this.collection, "all", this.render);
 	},
 	render: function () {
-		this.$el.empty();
-		this.$el.html(this.collection.pagination);
+		this.$(".pg-number").text(page)
+		//this.$el.empty();
+		//this.$el.html(this.collection.pagination);
+		//
+		//this.$("a").each((e, obj) => {
+		//	obj.addEventListener(onClick, )
+		//	console.log(obj);
+		//});
 	},
+	previous: function(e) {
+		e.preventDefault();
+		if (page == 1) {
+			return
+		}
+
+		page -= 1;
+		this.collection.fetch({ data: { page } });
+		this.render();
+	},
+	next: function(e) {
+		e.preventDefault();
+		page += 1;
+		this.collection.fetch({ data: { page } });
+		this.render();
+	}
 });
 
 var App = {

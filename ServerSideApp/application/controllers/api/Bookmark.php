@@ -8,7 +8,7 @@ class Bookmark extends CI_Controller {
 
 				if (!array_key_exists("user_id", $this->session->userdata)) {
 					redirect("/user/login");
-					
+					// IDEALLY you want to do much better security here. for now this is what we will do
 				}
     }
 
@@ -21,6 +21,7 @@ class Bookmark extends CI_Controller {
         /*$config['base_url'] = site_url('bookmark/view');*/
         $config['total_rows'] = $this->bookmark_model->get_bookmark_count($user_id);
         $config['per_page'] = 5; // Number of bookmarks per page
+				$config["use_page_numbers"] = TRUE;
     
         $this->pagination->initialize($config);
 
@@ -30,17 +31,17 @@ class Bookmark extends CI_Controller {
 					parse_str($url['query'], $params);
 				}
 
-				$page = 1;
+				$config["cur_page"] = 1;
 				$tag = null;
 					
 				if (array_key_exists("page", $params)) {
-					$page = $params["page"];
+					$config["cur_page"] = $params["page"];
 				}
 				if (array_key_exists("tag", $params)) {
 					$tag = $params["tag"];
 				}
 
-        $data['bookmarks'] = $this->bookmark_model->get_bookmarks($user_id, $config['per_page'], $page, $tag);
+        $data['bookmarks'] = $this->bookmark_model->get_bookmarks($user_id, $config['per_page'], $config["cur_page"], $tag);
         $data['pagination'] = $this->pagination->create_links();
 
         echo json_encode($data);
@@ -53,7 +54,7 @@ class Bookmark extends CI_Controller {
 			$bookmark = $this->bookmark_model->add_bookmark($request, $user_id);
 			echo json_encode($bookmark);
 
-			
+			// TODO: error handling
     }
 
     public function put($id) {

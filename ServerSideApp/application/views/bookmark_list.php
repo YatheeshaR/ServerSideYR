@@ -183,6 +183,11 @@ justify-content: space-between;
 </div>
 
 <div id="pagination">
+	<a class="prev" href="#">&lt;Prev</a>
+	
+	<span class="pg-number">1</span>
+
+	<a class="next" href="#" />Next &gt;</a>
 </div>
 
 

@@ -87,6 +87,7 @@
                 <input type="submit" value="Login" class="btn">
             </div>
         <?php echo form_close(); ?>
+				<a href="/user/register">No account? Register</a>
     </div>
 </body>
 </html>
